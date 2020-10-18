@@ -13,14 +13,20 @@ import PaymentsScreen from "../screens/PaymentsScreen";
 import ViewPercentageScreen from "../screens/ViewPercentageScreen";
 import PlaceOrderScreen from "../screens/PlaceOrderScreen";
 import RequestOrOrderScreen from "../screens/RequestOrOrderScreen";
+import OrderStatusFullScreen from "../screens/OrderStatusFullScreen";
+import ReceivedScreen from "../screens/ReceivedScreen";
+import DeliveredScreen from "../screens/DeliveredScreen";
+import PartiallyDeliveredScreen from "../screens/PartiallyDeliveredScreen";
+import PaymentGatewayScreen from "../screens/PaymentGatewayScreen";
+
 
 const Stack = createStackNavigator();
 
 export default function HomeNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {/* <Stack.Screen name={routes.LoadingScreen} component={LoadingScreen} />
-      <Stack.Screen name={routes.LoginScreen} component={LoginScreen} /> */}
+       <Stack.Screen name={routes.LoadingScreen} component={LoadingScreen} />
+      <Stack.Screen name={routes.LoginScreen} component={LoginScreen} /> 
       <Stack.Screen
         name={routes.MainDashboardScreen}
         component={MainDashboardScreen}
@@ -54,6 +60,33 @@ export default function HomeNavigator() {
         name={routes.RequestOrOrderScreen}
         component={RequestOrOrderScreen}
       />
+
+      <Stack.Screen
+        name={routes.OrderStatusFullScreen}
+        component={OrderStatusFullScreen}
+      />
+
+      <Stack.Screen
+        name={routes.ReceivedScreen}
+        component={ReceivedScreen}
+      />
+      
+      <Stack.Screen
+        name={routes.DeliveredScreen}
+        component={DeliveredScreen}
+      />
+
+      <Stack.Screen
+        name={routes.PartiallyDeliveredScreen}
+        component={PartiallyDeliveredScreen}
+      />
+
+    <Stack.Screen
+            name={routes.PaymentGatewayScreen}
+            component={PaymentGatewayScreen}
+          />
+      
+
     </Stack.Navigator>
   );
 }

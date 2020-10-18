@@ -1,12 +1,14 @@
 import React, { Component } from "react";
-import { Text, StyleSheet, View, Image, Alert } from "react-native";
+import { Text, StyleSheet, View, Image, Alert, AppRegistry } from "react-native";
 import Screen from "../components/Screen";
-import PureChart from "react-native-pure-chart";
+// import PureChart from "react-native-pure-chart";
 import AppText from "../common/AppText";
 import AppButton from "../common/AppButton";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import colors from "../config/colors";
 import constants from "../utils/constants";
+// import Pie from 'react-native-pie'
+
 
 const axios = require("axios").default;
 
@@ -19,23 +21,24 @@ export default class ViewPercentageScreen extends Component {
       itemObjId: "",
       itemName: "",
       photoPath:"",
-      capacity: 100,
+      capacity: 0,
       //   used: 0,
       //   remaining: 50,
 
       dataSet: [
-        { value: 30, label: "Used", color: "red" },
-        { value:70, label: "Remaining", color: "blue" },
+        { value: 0, label: "Used", color: "red" },
+        { value: 0, label: "Remaining", color: "blue" }
         // 0 value - used
         // 1 value - remaining
       ],
+      loggedUser:""
     };
   }
 
   componentDidMount() {
-
     this.setState({
       itemObjId: this.props.route.params.itemObjId.props.children,
+      loggedUser: this.props.route.params.loggedUser,
   }, () => {
     axios
     .get(constants.ipAddress + "/item/id="+this.state.itemObjId+"")
@@ -49,13 +52,31 @@ export default class ViewPercentageScreen extends Component {
         this.setState({ itemName: response.data[0].itemName });
         this.setState({ photoPath: response.data[0].photoURL21 });
         this.setState({ capacity: response.data[0].maxQty });
-        
+
         var usedQty = response.data[0].maxQty - response.data[0].availableQty;
         var availQty = response.data[0].availableQty;
 
-        // Alert.alert(usedQty.toString(), response.data[0].maxQty.toString());
+        var usedQtyPresentage= parseInt(usedQty);
+        var availQtyPresentage= parseInt(availQty);
+
+        // Alert.alert(usedQtyPresentage.toString(),availQtyPresentage.toString());
         
-//CHECK - > fill usedQty to state dataset
+        
+        if(usedQtyPresentage>availQtyPresentage){
+          // Alert.alert(usedQtyPresentage.toString(),availQtyPresentage.toString());
+
+          //usedQty is less or equal  - first add usedQty and then availQty
+          this.setState({ 
+            dataSet:[{ value: usedQtyPresentage, label: "Used", color: "red" },{ value:availQtyPresentage, label: "Remaining", color: "blue" }]
+          });
+        }else if(usedQtyPresentag<=availQtyPresentage){
+          // Alert.alert(availQtyPresentage.toString(),usedQtyPresentage.toString());
+
+          //usedQty is greater   - first add availQty and then usedQty
+          this.setState({ 
+            dataSet:[{ value: parseInt(availQtyPresentage), label: "Remaining", color: "blue" },{ value: parseInt(usedQtyPresentage), label: "Used", color: "red" }]
+          });
+        }
 
 
 // this.setState(prevState => ({
@@ -92,8 +113,7 @@ export default class ViewPercentageScreen extends Component {
   }
 
   onPressPlaceNewOrder = () => {
-    Alert.alert(this.state.itemObjId);
-    this.props.navigation.navigate("PlaceOrderScreen",{itemObjId:this.state.itemObjId});
+    this.props.navigation.navigate("PlaceOrderScreen",{itemObjId:this.state.itemObjId, loggedUser:this.state.loggedUser});
   };
 
   render() {
@@ -119,7 +139,7 @@ export default class ViewPercentageScreen extends Component {
               />
             </View>
             <View style={styles.piechartArea}>
-              <PureChart data={this.state.dataSet} type="pie" />
+              {/* <PureChart data={this.state.dataSet} type="pie" /> */}
             </View>
 
             {/* Start Summary */}
@@ -136,16 +156,6 @@ export default class ViewPercentageScreen extends Component {
               </View>
               <View style={styles.usedRemainingSummaryRow}>
                 <View style={styles.summaryLeftSide}>
-                  <AppText style={styles.titleText}>Used</AppText>
-                </View>
-                <View style={styles.summaryRightSide}>
-                  <AppText style={styles.valueText}>
-                    {this.state.dataSet[0].value}
-                  </AppText>
-                </View>
-              </View>
-              <View style={styles.usedRemainingSummaryRow}>
-                <View style={styles.summaryLeftSide}>
                   <AppText style={styles.titleText}>Remaining</AppText>
                 </View>
                 <View style={styles.summaryRightSide}>
@@ -154,17 +164,27 @@ export default class ViewPercentageScreen extends Component {
                   </AppText>
                 </View>
               </View>
+              <View style={styles.usedRemainingSummaryRow}>
+                <View style={styles.summaryLeftSide}>
+                  <AppText style={styles.titleText}>Used</AppText>
+                </View>
+                <View style={styles.summaryRightSide}>
+                  <AppText style={styles.valueText}>
+                    {this.state.dataSet[0].value}
+                  </AppText>
+                </View>
+              </View>
             </View>
             {/* End of summary */}
 
-            <View style={styles.centerBtns}>
+            {/* <View style={styles.centerBtns}>
               <TouchableOpacity
                 //   onPress={onPress}
                 style={styles.appButtonContainer}
               >
                 <Text style={styles.appButtonText}>View Previous Orders</Text>
               </TouchableOpacity>
-            </View>
+            </View> */}
 
             <View style={styles.centerBtns}>
               <TouchableOpacity
